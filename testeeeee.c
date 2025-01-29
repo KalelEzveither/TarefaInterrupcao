@@ -89,7 +89,7 @@ void display_number(int num) {
         {   // Dígito 3
             1, 1, 1, 1, 1,
             0, 0, 0, 0, 1,
-            1, 1, 1, 1, 0,
+            0, 1, 1, 1, 1,
             0, 0, 0, 0, 1,
             1, 1, 1, 1, 1
         },
@@ -136,24 +136,24 @@ void display_number(int num) {
             1, 1, 1, 1, 1
         }
     };
-    
+
+    // Atualiza a matriz de LEDs com base no número selecionado
     for (int i = 0; i < 25; i++) {
-        fitaEd[i] = numbers[num][i] ? urgb_u32(255, 255, 255) : 0;
+        fitaEd[i] = numbers[num][i] ? urgb_u32(33,33,33) : urgb_u32(0, 0, 0);
     }
+
+    // Atualiza a fita LED com a nova exibição
     atualizaFita();
 }
 
-// Interrupt Service Routine (ISR) para o botão A
-void button_a_isr(uint gpio, uint32_t events) {
-    button_a_pressed = true;
-    button_b_pressed = false;
+void button_isr(uint gpio, uint32_t events) {
+    if (gpio == BUTTON_A) {
+        button_a_pressed = true;
+    } else if (gpio == BUTTON_B) {
+        button_b_pressed = true;
+    }
 }
 
-// Interrupt Service Routine (ISR) para o botão B
-void button_b_isr(uint gpio, uint32_t events) {
-    button_b_pressed = true;
-    button_a_pressed = false;
-}
 
 int main() {
     stdio_init_all(); // Inicializa a comunicação serial
@@ -175,29 +175,27 @@ int main() {
     gpio_init(BUTTON_A);
     gpio_set_dir(BUTTON_A, GPIO_IN);
     gpio_pull_up(BUTTON_A);
-    gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_a_isr);
+    gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_isr);
     
     // Configuração do botão B
     gpio_init(BUTTON_B);
     gpio_set_dir(BUTTON_B, GPIO_IN);
     gpio_pull_up(BUTTON_B);
-    gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_b_isr);
+    gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);
 
     apagaLEDS(); // Garante que os LEDs comecem apagados
 
     while (1) {
-        // Se o botão A for pressionado, incrementa o número exibido
-        if (button_a_pressed) {
-            number = (number + 1) % 10;
-            display_number(number);
-            button_a_pressed = false;
-        }
-        // Se o botão B for pressionado, decrementa o número exibido
-        if (button_b_pressed) {
-            number = (number - 1 + 10) % 10;
-            display_number(number);
-            button_b_pressed = false;
-        }
-        sleep_ms(500); // Pequeno delay para evitar múltiplas leituras acidentais
+    if (button_a_pressed) {
+        number = (number + 1) % 10;
+        display_number(number);
+        button_a_pressed = false;  // Resetar a flag após o uso
     }
+    if (button_b_pressed) {
+        number = (number - 1 + 10) % 10;
+        display_number(number);
+        button_b_pressed = false;  // Resetar a flag após o uso
+    }
+    sleep_ms(500); // Pequeno delay para evitar múltiplas leituras acidentais
+}
 }
