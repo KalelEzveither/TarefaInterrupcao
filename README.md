@@ -13,3 +13,8 @@ Este projeto implementa uma matriz de LEDs WS2812 utilizando a **Raspberry Pi Pi
   - **Botão B**: Decrementa o número exibido.
 - LED vermelho piscando a cada 200ms como indicação de funcionamento.
 - Uso de **PIO e DMA** para otimização da comunicação com os LEDs WS2812.
+
+## Vídeo Demonstrativo
+O vídeo demonstrativo do projeto pode ser assistido no seguinte link: [YouTube](https://youtu.be/ko6l8eSSEWo)
+
+https://youtu.be/ko6l8eSSEWo
