@@ -139,13 +139,14 @@ void display_number(int num) {
 
     // Atualiza a matriz de LEDs com base no número selecionado
     for (int i = 0; i < 25; i++) {
-        fitaEd[i] = numbers[num][i] ? urgb_u32(33,33,33) : urgb_u32(0, 0, 0);
+        fitaEd[i] = numbers[num][i] ? urgb_u32(1,1,1) : urgb_u32(0, 0, 0);
     }
 
     // Atualiza a fita LED com a nova exibição
     atualizaFita();
 }
 
+// Função de tratamento de interrupção para os botões
 void button_isr(uint gpio, uint32_t events) {
     if (gpio == BUTTON_A) {
         button_a_pressed = true;
